@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="mangaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Chapter">
+          <Key>
+            <PropertyRef Name="manganame" />
+            <PropertyRef Name="number" />
+          </Key>
+          <Property Name="manganame" Type="nchar" MaxLength="40" Nullable="false" />
+          <Property Name="number" Type="int" Nullable="false" />
+          <Property Name="url" Type="nchar" MaxLength="100" />
+          <Property Name="spacing" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Manga">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="nchar" MaxLength="40" Nullable="false" />
+          <Property Name="displayname" Type="nvarchar" MaxLength="40" />
+          <Property Name="url" Type="nchar" MaxLength="100" Nullable="false" />
+          <Property Name="img" Type="nchar" MaxLength="100" />
+          <Property Name="totalchapters" Type="int" />
+        </EntityType>
+        <Association Name="FK_Chapter_ToTable">
+          <End Role="Manga" Type="Self.Manga" Multiplicity="1" />
+          <End Role="Chapter" Type="Self.Chapter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Manga">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Chapter">
+              <PropertyRef Name="manganame" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="mangaModelStoreContainer">
+          <EntitySet Name="Chapter" EntityType="Self.Chapter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Manga" EntityType="Self.Manga" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Chapter_ToTable" Association="Self.FK_Chapter_ToTable">
+            <End Role="Manga" EntitySet="Manga" />
+            <End Role="Chapter" EntitySet="Chapter" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="mangaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Chapter">
+          <Key>
+            <PropertyRef Name="manganame" />
+            <PropertyRef Name="number" />
+          </Key>
+          <Property Name="manganame" Type="String" MaxLength="40" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="number" Type="Int32" Nullable="false" />
+          <Property Name="url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="spacing" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Manga">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="40" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="displayname" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="img" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Chapters" Relationship="mangaModel.FK_Chapter_ToTable" FromRole="Manga" ToRole="Chapter" />
+          <Property Name="totalchapters" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="mangaEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Chapters" EntityType="Self.Chapter" />
+          <EntitySet Name="Mangas" EntityType="Self.Manga" />
+          <AssociationSet Name="FK_Chapter_ToTable" Association="mangaModel.FK_Chapter_ToTable">
+            <End Role="Manga" EntitySet="Mangas" />
+            <End Role="Chapter" EntitySet="Chapters" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="FK_Chapter_ToTable">
+          <End Type="mangaModel.Manga" Role="Manga" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="mangaModel.Chapter" Role="Chapter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Manga">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Chapter">
+              <PropertyRef Name="manganame" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="mangaModelStoreContainer" CdmEntityContainer="mangaEntities1">
+          <EntitySetMapping Name="Chapters">
+            <EntityTypeMapping TypeName="mangaModel.Chapter">
+              <MappingFragment StoreEntitySet="Chapter">
+                <ScalarProperty Name="manganame" ColumnName="manganame" />
+                <ScalarProperty Name="number" ColumnName="number" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="spacing" ColumnName="spacing" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Mangas">
+            <EntityTypeMapping TypeName="mangaModel.Manga">
+              <MappingFragment StoreEntitySet="Manga">
+                <ScalarProperty Name="totalchapters" ColumnName="totalchapters" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="displayname" ColumnName="displayname" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="img" ColumnName="img" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

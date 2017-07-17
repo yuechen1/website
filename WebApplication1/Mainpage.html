@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        #moviestuff, #middle, #mangaselector{
+            width:32%;
+            height:100%;
+            border:2px solid black;
+            border-color:black;
+            display:inline-block;
+            top:0;
+        }
+        input[type=text] {
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            background-image: url('http://www.freeiconspng.com/uploads/search-icon-png-22.png');
+            background-size:contain;
+            background-position:left;
+            background-repeat:no-repeat;
+            padding:6px 16px 6px 40px;
+            font-size:14px;
+        }
+        table, th{
+            width:100%;
+            border:2px solid black;
+        }
+        tr, td{
+            width:100%;
+            border-bottom: 1px solid black;
+        }
+        .manga {
+            width: 100%;
+        }
+        .chapter{
+            width:100%;
+            padding-left:16px;
+        }
+        .searchholder{
+            border:5px groove white;
+            background-color:lightblue;
+            width:100%;
+            font-size:20px;
+        }
+        .searchmanganame{
+            display:inline-block;
+        }
+        .searchimg{
+            width:100%;
+            max-width:160px;
+            display:inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="moviestuff"></div>
+    <div id="middle"></div>
+    <div id="mangaselector">
+        <h1 style="width:100%; background-color:blue; color:white; text-align:center;">MangaReader</h1>
+        <div>
+            <input type="text" id="searchbox" name="search" autocomplete="off" placeholder="Search for Manga!" onkeydown="search(event)">
+        </div>
+        <div id="mangasearch">
+
+        </div>
+        <div id="manganew">
+            
+
+
+        </div>
+
+    </div>
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript">
+
+        var output = "";
+        $(document).ready(function () {
+            $.getJSON('api/Manga').done(function (data) {
+                $('#manganew').append("<table id='newchapters'><tr><th>New Manga Today</th></tr></tbody></table >");
+                $.each(data, function (i, newlisting) {
+                    var output = "<tr><td><div class='manga' onclick=showmanga(" + newlisting.manga.name + ")>" + newlisting.manga.displayname + "</div>";
+                    $.each(newlisting.chapters, function (j, chapterk) {
+                        output += "<a class='chapter' href='/HtmlPage1.html'>Chapter " + chapterk.number + "</a></br>";
+                    })
+                    output += "</td></tr>";
+                    $('#newchapters').append(output);
+                })
+                
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        function showmanga(name) {
+            
+        }
+        function search(event) {
+            if (event.keyCode == 13) {
+                var input = document.getElementById("searchbox").value;
+                var searchinput = "api/Values/" + input;
+                $.getJSON(searchinput).done(function (data) {
+                    $.each(data, function (i, manga) {
+                        $('#mangasearch').append("<div class='searchholder' onclick=showmanga("+manga.name+")><div class='searchmanganame'>" + manga.displayname + "</div><img class='searchimg' src=" + manga.img + "></div>");
+                    })
+                });
+                
+            }
+        }
+    </script>
+</body>
+</html>

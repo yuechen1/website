@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="mangaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Chapter">
+    <Key>
+      <PropertyRef Name="manganame" />
+      <PropertyRef Name="number" />
+    </Key>
+    <Property Name="manganame" Type="nchar" MaxLength="40" Nullable="false" />
+    <Property Name="number" Type="int" Nullable="false" />
+    <Property Name="url" Type="nchar" MaxLength="100" />
+    <Property Name="spacing" Type="nchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="Manga">
+    <Key>
+      <PropertyRef Name="name" />
+    </Key>
+    <Property Name="name" Type="nchar" MaxLength="40" Nullable="false" />
+    <Property Name="displayname" Type="nvarchar" MaxLength="40" />
+    <Property Name="url" Type="nchar" MaxLength="100" Nullable="false" />
+    <Property Name="img" Type="nchar" MaxLength="100" />
+    <Property Name="totalchapters" Type="int" />
+  </EntityType>
+  <Association Name="FK_Chapter_ToTable">
+    <End Role="Manga" Type="Self.Manga" Multiplicity="1" />
+    <End Role="Chapter" Type="Self.Chapter" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Manga">
+        <PropertyRef Name="name" />
+      </Principal>
+      <Dependent Role="Chapter">
+        <PropertyRef Name="manganame" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="mangaModelStoreContainer">
+    <EntitySet Name="Chapter" EntityType="Self.Chapter" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Manga" EntityType="Self.Manga" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Chapter_ToTable" Association="Self.FK_Chapter_ToTable">
+      <End Role="Manga" EntitySet="Manga" />
+      <End Role="Chapter" EntitySet="Chapter" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

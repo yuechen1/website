@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="mangaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Chapter">
+    <Key>
+      <PropertyRef Name="manganame" />
+      <PropertyRef Name="number" />
+    </Key>
+    <Property Name="manganame" Type="String" MaxLength="40" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="number" Type="Int32" Nullable="false" />
+    <Property Name="url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="spacing" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Manga">
+    <Key>
+      <PropertyRef Name="name" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="40" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="displayname" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="img" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="Chapters" Relationship="mangaModel.FK_Chapter_ToTable" FromRole="Manga" ToRole="Chapter" />
+    <Property Name="totalchapters" Type="Int32" />
+  </EntityType>
+  <EntityContainer Name="mangaEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Chapters" EntityType="Self.Chapter" />
+    <EntitySet Name="Mangas" EntityType="Self.Manga" />
+    <AssociationSet Name="FK_Chapter_ToTable" Association="mangaModel.FK_Chapter_ToTable">
+      <End Role="Manga" EntitySet="Mangas" />
+      <End Role="Chapter" EntitySet="Chapters" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association Name="FK_Chapter_ToTable">
+    <End Type="mangaModel.Manga" Role="Manga" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="mangaModel.Chapter" Role="Chapter" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Manga">
+        <PropertyRef Name="name" />
+      </Principal>
+      <Dependent Role="Chapter">
+        <PropertyRef Name="manganame" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

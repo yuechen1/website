@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        #SlideShow_Holder {
+            width: 100%;
+            border: 0px;
+            margin: 0px;
+        }
+
+            #SlideShow_Holder ul {
+                width: 80%;
+                max-width:800px;
+                margin: auto;
+                list-style: none;
+            }
+
+            #SlideShow_Holder li {
+                margin: auto;
+                width: 100%;
+                position: center;
+            }
+
+        img {
+            width: inherit;
+            max-width: 100%;
+        }
+
+        #NavBar {
+            top: 0px;
+            height: 5vh;
+            width: 100%;
+            color: white;
+        }
+
+        #ComicName {
+            position: relative;
+            top: 0px;
+            left: 0px;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        #pageNumber {
+            width: 100%;
+            margin: auto;
+            background-color: grey;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #SelectorContainer {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            height: 10%;
+        }
+
+        #Selector {
+            height: auto;
+            max-width: 100%;
+            margin: auto;
+            list-style: none;
+            display: inline-block;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            white-space: nowrap;
+            padding: 5px;
+        }
+
+        .selector {
+            height: 220px;
+            min-width: 150px;
+            width: 10%;
+            display: inline-block;
+            margin: 5px;
+            border: 5px;
+            top: 0px;
+        }
+    </style>
+</head>
+<body onload="loadpage()" style="background-color:black">
+    <div id="NavBar">
+        <h1 id="ComicName" />
+    </div>
+    <div id="pageNumber"></div>
+    <br />
+
+    <div id="SlideShow_Holder" >
+        <ul id="IH" onclick=NextImage()></ul>
+    </div>
+    <br />
+    <div id="SelectorContainer">
+        <div id="Selector">
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        var allSlides = [];
+        var slidenumber = -1;
+        var currentslide;
+        var loadslide = 0;
+
+
+        //set up the page, load all the images from source site
+
+        function loadpage() {
+            var srcsite = "http://i9.mangareader.net/kingdom/521/kingdom-9447727.jpg"
+            var http = srcsite.split('://');    //remove the http                                   i7.mangareader.net/kingdom/519/kingdom-9388999.jpg
+            var sub = http[1].split('/');       //get the rest of elements                          i7.mangareader.net | kingdom | 519 | kingdom-9388999.jpg
+            var chapter = sub[2];               //get chapter number                                519
+            var imagefull = sub[3];             //the name of the image file                        kingdom-9388999.jpg
+            var imagenumjpg = imagefull.split('-'); //remove the managa name                        kingdom | 9388999.jpg
+            var imagenumstr = imagenumjpg[imagenumjpg.length - 1].split('.');   //remove the jpg    9388999
+            var imagenum = parseInt(imagenumstr[0]); //get the image number
+            var scrollsize = 0;
+
+            //reconstruct the first part of the image url
+            var front = http[1].split('/', 2);
+            front = front.join('/');
+            front = http[0] + '://' + front;
+
+            var name = '';
+            var showname = '';
+            //reconstruct the name of the manga with - in between
+            //and one with space, this one will be shown to the user
+            for (i = 0; i < imagenumjpg.length - 1; i++) {
+                name = name + imagenumjpg[i] + '-';
+                showname = showname + imagenumjpg[i] + ' ';
+            }
+            showname = showname + '| ' + chapter;
+            document.getElementById("ComicName").innerHTML = showname;              //show the comic name and chapter at the top
+            document.getElementById("pageNumber").innerHTML = 1 + '/nn';   //show the current page number
+
+
+            //get the source of the image from the website passed to it
+            //the next image is +6 from the source of the current one *depend on the source
+            //fill all the images in the slideshow
+            loadimage(front, chapter, name, imagenum);
+            StartSlideShow();
+        }
+
+        //load an image, if the image size is not nothing try to load the next image
+        function loadimage(front, chapter, name, imagenum) {
+            var image = document.createElement("img");
+            var li = document.createElement("li");
+            var source = front + '/' + chapter + '/' + name + imagenum + '.jpg';
+            image.src = source;
+            li.setAttribute("class", "slides");
+
+            imagenum = imagenum + 6;
+
+            li.appendChild(image);
+            document.getElementById("IH").appendChild(li);
+
+            image.onload = function () {
+
+                //if there is an image, load the next one
+                if (image.clientHeight > 100) {
+                    loadimage(front, chapter, name, imagenum);
+
+                    //add it to the selector
+                    var simg = document.createElement("img");
+                    simg.src = image.src;
+                    simg.setAttribute("class", "selector");
+                    document.getElementById("Selector").appendChild(simg);
+                    simg.setAttribute("onclick", "SwitchImage("+loadslide+")");
+                    loadslide++;
+                }
+
+                //if its the first image show it
+                li.style.display = "none";  //set image to invisible
+                if (slidenumber == -1) {
+                    li.style.display = "block";
+                    slidenumber++;
+                }
+                else {
+                    SwitchImage(0);
+                }
+            }
+
+            image.onerror = function () {
+                li.style.display = "none";
+            }
+        }
+
+        //get the list of slides
+        function StartSlideShow() {
+            allSlides = document.getElementsByClassName('slides');
+            allselectors = document.getElementsByClassName('selector');
+            currentslide = allSlides[0];
+        }
+
+        //show the next image and hide the current
+        function NextImage() {
+            currentslide.style.display = "none";
+            slidenumber++;
+            if (slidenumber >= allSlides.length - 2) {
+                slidenumber = allSlides.length - 2;
+            }
+            if (slidenumber < 0) {
+                slidenumber = 0;
+            }
+            currentslide = allSlides[slidenumber];
+            currentslide.style.display = "block";
+            document.getElementById("pageNumber").innerHTML = (slidenumber + 1) + '/' + (allSlides.length - 1);   //show the current page number
+
+            var container = document.getElementById('Selector');
+            container.scrollLeft = allselectors[slidenumber].offsetWidth * slidenumber + 20;
+        }
+
+        //change the image to the one selected
+        function SwitchImage(num) {
+            currentslide.style.display = "none";
+            slidenumber = num;
+            currentslide = allSlides[num];
+            currentslide.style.display = "block";
+            document.getElementById("pageNumber").innerHTML = (slidenumber + 1) + '/' + (allSlides.length - 1);   //show the current page number
+            container.scrollLeft = allselectors[slidenumber].offsetWidth * slidenumber + 20;
+        }
+
+    </script>
+
+</body>
+</html>

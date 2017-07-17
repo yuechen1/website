@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="mangaModelStoreContainer" CdmEntityContainer="mangaEntities1">
+    <EntitySetMapping Name="Chapters">
+      <EntityTypeMapping TypeName="mangaModel.Chapter">
+        <MappingFragment StoreEntitySet="Chapter">
+          <ScalarProperty Name="manganame" ColumnName="manganame" />
+          <ScalarProperty Name="number" ColumnName="number" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="spacing" ColumnName="spacing" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Mangas">
+      <EntityTypeMapping TypeName="mangaModel.Manga">
+        <MappingFragment StoreEntitySet="Manga">
+          <ScalarProperty Name="totalchapters" ColumnName="totalchapters" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="displayname" ColumnName="displayname" />
+          <ScalarProperty Name="url" ColumnName="url" />
+          <ScalarProperty Name="img" ColumnName="img" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
