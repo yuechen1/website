@@ -50,7 +50,6 @@ namespace WebApplication1.Controllers
                     if (db.Mangas.Find(name) == null)
                     {
                         db.Mangas.Add(manga);
-                        db.SaveChanges();
                     }
                 }
                 catch(DbEntityValidationException dbEx)
@@ -88,9 +87,7 @@ namespace WebApplication1.Controllers
                         if (db.Chapters.Find(name, int.Parse(number)) == null)
                         {
                             db.Chapters.Add(chapter);
-                            db.SaveChanges();
                         }
-
                     }
                     catch (DbEntityValidationException dbEx)
                     {
@@ -118,14 +115,12 @@ namespace WebApplication1.Controllers
         public Manga Get(string id)
         {
             var db = new mangaEntities1();
-            var manga = db.Mangas.Find(id);  //try this
-            var Url = manga.url;
-
-            //search database for the manga
+            var manga = db.Mangas.Find('/' + id);  //try this
 
             //if exsists, check the chapter count
             if (manga != null)
             {
+                var Url = manga.url;
                 //might not need, only need the number of chapters
                 var htmlWeb = new HtmlWeb();
                 var documentNode = htmlWeb.Load(Url);
