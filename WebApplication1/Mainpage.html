@@ -82,9 +82,10 @@
             $.getJSON('api/Manga').done(function (data) {
                 $('#manganew').append("<table id='newchapters'><tr><th>New Manga Today</th></tr></tbody></table >");
                 $.each(data, function (i, newlisting) {
-                    var output = "<tr><td><div class='manga' onclick=showmanga(" + newlisting.manga.name + ")>" + newlisting.manga.displayname + "</div>";
+                    var output = "<tr><td><div class='manga' onclick=\"showmanga('" + newlisting.manga.name + "')\">" + newlisting.manga.displayname + "</div>";
                     $.each(newlisting.chapters, function (j, chapterk) {
-                        output += "<a class='chapter' href='/HtmlPage1.html'>Chapter " + chapterk.number + "</a></br>";
+                        var manganamestring = chapterk.manganame.substring(1);
+                        output += "<a class='chapter' href='/HtmlPage1.html?" + manganamestring + '%20' + chapterk.number + "'>Chapter " + chapterk.number + "</a></br>";
                     })
                     output += "</td></tr>";
                     $('#newchapters').append(output);
@@ -94,16 +95,36 @@
         });
     </script>
     <script type="text/javascript">
+        //showing 
         function showmanga(name) {
-            
+            name = name.substring(1);
+            var chaptercount;
+            var dname;
+            document.getElementById('mangasearch').innerHTML = "";
+            $.getJSON("api/Manga/" + name).done(function (data) {
+                if (data == null) {
+                    $('#mangasearch').append("<strong>Error: Manga not found</strong>");
+                }
+                chaptercount = Number(data.totalchapters);
+                dname = data.displayname;
+                $('#mangasearch').append("<div class='mangashowholder'><img class='searching' src=" + data.img +"><div style=\"display:inline-block\">Name: "+data.displayname+"</br>Current Chapter Count: "+ data.totalchapters+"</div><div id='mangachapterselect'></div></div>");
+            });
+            for (var i = 0; i < chaptercount; i++) {
+                $('#mangachapterselect').append("<a href='/HtmlPage1.html'>" + dname + " " + i + "</a></br>");
+            }
         }
+
+        //showing the search result of the manga
         function search(event) {
             if (event.keyCode == 13) {
                 var input = document.getElementById("searchbox").value;
                 var searchinput = "api/Values/" + input;
                 $.getJSON(searchinput).done(function (data) {
+                    if (data == null) {
+                        $('#mangasearch').append("<strong>No matching manga found</strong>");
+                    }
                     $.each(data, function (i, manga) {
-                        $('#mangasearch').append("<div class='searchholder' onclick=showmanga("+manga.name+")><div class='searchmanganame'>" + manga.displayname + "</div><img class='searchimg' src=" + manga.img + "></div>");
+                        $('#mangasearch').append("<div class='searchholder' onclick=\"showmanga('"+manga.name+"')\"><div class='searchmanganame'>" + manga.displayname + "</div><img class='searchimg' src=" + manga.img + "></div>");
                     })
                 });
                 

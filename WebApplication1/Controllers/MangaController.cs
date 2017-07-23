@@ -30,11 +30,12 @@ namespace WebApplication1.Controllers
             {
                 tempnodes.Add(i.ParentNode);
             }
-            var db = new mangaEntities1();
 
 
             //split the list into each manga and their chapters
             List<newlisting> NC = new List<newlisting>();
+
+            mangaEntities1 db = new mangaEntities1();
             foreach (HtmlNode k in tempnodes)
             {
                 newlisting templisting = new newlisting();
@@ -79,7 +80,6 @@ namespace WebApplication1.Controllers
                     var chapterurl = i.Attributes["href"].Value;    //get the ref url
                     var split = chapterurl.Split('/');              //split the string to get the chapter number
                     var number = split[split.Count() - 1];
-                    chapterurl = "http://www.mangareader.net" + chapterurl; //get the full url
                     Chapter chapter = new Chapter { manganame = name, number = int.Parse(number), url = null, spacing = null };
                     templist.Add(chapter);
 
@@ -90,7 +90,6 @@ namespace WebApplication1.Controllers
                             db.Chapters.Add(chapter);
                             db.SaveChanges();
                         }
-
                     }
                     catch (DbEntityValidationException dbEx)
                     {
@@ -118,14 +117,12 @@ namespace WebApplication1.Controllers
         public Manga Get(string id)
         {
             var db = new mangaEntities1();
-            var manga = db.Mangas.Find(id);  //try this
-            var Url = manga.url;
-
-            //search database for the manga
+            var manga = db.Mangas.Find('/' + id);  //try this
 
             //if exsists, check the chapter count
             if (manga != null)
             {
+                var Url = manga.url;
                 //might not need, only need the number of chapters
                 var htmlWeb = new HtmlWeb();
                 var documentNode = htmlWeb.Load(Url);

@@ -56,6 +56,7 @@ namespace WebApplication1.Controllers
                         try
                         {
                             db.Mangas.Add(manga);
+                            db.SaveChanges();
                         }
                         catch (DbEntityValidationException dbEx)
                         {

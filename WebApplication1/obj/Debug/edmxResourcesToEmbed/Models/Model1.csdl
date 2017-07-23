@@ -15,7 +15,7 @@
       <PropertyRef Name="name" />
     </Key>
     <Property Name="name" Type="String" MaxLength="40" FixedLength="true" Unicode="true" Nullable="false" />
-    <Property Name="displayname" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="displayname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="url" Type="String" MaxLength="100" FixedLength="true" Unicode="true" Nullable="false" />
     <Property Name="img" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
     <NavigationProperty Name="Chapters" Relationship="mangaModel.FK_Chapter_ToTable" FromRole="Manga" ToRole="Chapter" />
@@ -30,9 +30,7 @@
     </AssociationSet>
   </EntityContainer>
   <Association Name="FK_Chapter_ToTable">
-    <End Type="mangaModel.Manga" Role="Manga" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
+    <End Type="mangaModel.Manga" Role="Manga" Multiplicity="1" />
     <End Type="mangaModel.Chapter" Role="Chapter" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Manga">
