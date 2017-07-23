@@ -83,7 +83,7 @@
 </head>
 <body onload="loadpage()" style="background-color:black">
     <div id="NavBar">
-        <h1 id="ComicName" />
+        <h1 id="ComicName" ></h1>
     </div>
     <div id="pageNumber"></div>
     <br />
@@ -97,17 +97,56 @@
 
         </div>
     </div>
+    <script src="Scripts/jquery-1.10.2.js"></script>
     <script type="text/javascript">
         var allSlides = [];
         var slidenumber = -1;
         var currentslide;
         var loadslide = 0;
+        var searchname = "";
 
-
-        //set up the page, load all the images from source site
 
         function loadpage() {
-            var srcsite = "http://i9.mangareader.net/kingdom/521/kingdom-9447727.jpg"
+            var siteurl = document.URL;
+            var request = siteurl.split('?');
+            var pagediff = 0;
+            var currentchapter;
+            var firstimgurl;
+            var manganame;
+
+            if (request.length == 2) {
+                var request = request[1];
+                var requeststring = "api/Chapter/" + request;
+                $.getJSON(requeststring).done(function (data) {
+                    //alert("'"+data.dname+"'");
+                    //alert(data.dname);
+                    document.getElementById("ComicName").innerHTML = "'" + data.dname + '|' + data.thischapter.number + "'";
+                    pagediff = data.thischapter.spacing;
+                    pagediff = parseInt(pagediff);
+                    firstimgurl = data.thischapter.url;
+                    manganame = data.thischapter.manganame;
+                    //alert(pagediff + " " + firstimgurl + " " + manganame);
+                    searchname = manganame;
+                    if (firstimgurl == null) {
+                        document.getElementById("ComicName").innerHTML = "Error on server";
+                        document.getElementById("pageNumber").innerHTML = 'n/a';
+                    }
+                    else {
+                        loadimages(firstimgurl, pagediff);
+                    }
+                });
+
+            }
+            else {
+                document.getElementById("ComicName").innerHTML = "No Manga or Chapter Found: 404";
+                document.getElementById("pageNumber").innerHTML = 'n/a';
+            }
+        }
+        //set up the page, load all the images from source site
+        function loadimages(srcsite, pagediff) {
+
+            //var srcsite = "http://i9.mangareader.net/kingdom/521/kingdom-9447727.jpg"
+
             var http = srcsite.split('://');    //remove the http                                   i7.mangareader.net/kingdom/519/kingdom-9388999.jpg
             var sub = http[1].split('/');       //get the rest of elements                          i7.mangareader.net | kingdom | 519 | kingdom-9388999.jpg
             var chapter = sub[2];               //get chapter number                                519
@@ -130,27 +169,25 @@
                 name = name + imagenumjpg[i] + '-';
                 showname = showname + imagenumjpg[i] + ' ';
             }
-            showname = showname + '| ' + chapter;
-            document.getElementById("ComicName").innerHTML = showname;              //show the comic name and chapter at the top
             document.getElementById("pageNumber").innerHTML = 1 + '/nn';   //show the current page number
 
 
             //get the source of the image from the website passed to it
             //the next image is +6 from the source of the current one *depend on the source
             //fill all the images in the slideshow
-            loadimage(front, chapter, name, imagenum);
+            loadimage(front, chapter, name, imagenum, pagediff);
             StartSlideShow();
         }
 
         //load an image, if the image size is not nothing try to load the next image
-        function loadimage(front, chapter, name, imagenum) {
+        function loadimage(front, chapter, name, imagenum, pagediff) {
             var image = document.createElement("img");
             var li = document.createElement("li");
             var source = front + '/' + chapter + '/' + name + imagenum + '.jpg';
             image.src = source;
             li.setAttribute("class", "slides");
 
-            imagenum = imagenum + 6;
+            imagenum = imagenum + pagediff;
 
             li.appendChild(image);
             document.getElementById("IH").appendChild(li);
@@ -158,8 +195,8 @@
             image.onload = function () {
 
                 //if there is an image, load the next one
-                if (image.clientHeight > 100) {
-                    loadimage(front, chapter, name, imagenum);
+                if (image.clientHeight > 100 && pagediff > 0) {
+                    loadimage(front, chapter, name, imagenum, pagediff);
 
                     //add it to the selector
                     var simg = document.createElement("img");

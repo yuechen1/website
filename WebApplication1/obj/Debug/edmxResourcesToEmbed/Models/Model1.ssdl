@@ -15,13 +15,15 @@
       <PropertyRef Name="name" />
     </Key>
     <Property Name="name" Type="nchar" MaxLength="40" Nullable="false" />
-    <Property Name="displayname" Type="nvarchar" MaxLength="40" />
+    <Property Name="displayname" Type="nvarchar" MaxLength="100" />
     <Property Name="url" Type="nchar" MaxLength="100" Nullable="false" />
     <Property Name="img" Type="nchar" MaxLength="100" />
     <Property Name="totalchapters" Type="int" />
   </EntityType>
   <Association Name="FK_Chapter_ToTable">
-    <End Role="Manga" Type="Self.Manga" Multiplicity="1" />
+    <End Role="Manga" Type="Self.Manga" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="Chapter" Type="Self.Chapter" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Manga">

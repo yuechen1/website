@@ -84,7 +84,8 @@
                 $.each(data, function (i, newlisting) {
                     var output = "<tr><td><div class='manga' onclick=\"showmanga('" + newlisting.manga.name + "')\">" + newlisting.manga.displayname + "</div>";
                     $.each(newlisting.chapters, function (j, chapterk) {
-                        output += "<a class='chapter' href='/HtmlPage1.html'>Chapter " + chapterk.number + "</a></br>";
+                        var manganamestring = chapterk.manganame.substring(1);
+                        output += "<a class='chapter' href='/HtmlPage1.html?" + manganamestring + '%20' + chapterk.number + "'>Chapter " + chapterk.number + "</a></br>";
                     })
                     output += "</td></tr>";
                     $('#newchapters').append(output);

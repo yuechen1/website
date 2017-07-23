@@ -30,11 +30,12 @@ namespace WebApplication1.Controllers
             {
                 tempnodes.Add(i.ParentNode);
             }
-            var db = new mangaEntities1();
 
 
             //split the list into each manga and their chapters
             List<newlisting> NC = new List<newlisting>();
+
+            mangaEntities1 db = new mangaEntities1();
             foreach (HtmlNode k in tempnodes)
             {
                 newlisting templisting = new newlisting();
@@ -50,6 +51,7 @@ namespace WebApplication1.Controllers
                     if (db.Mangas.Find(name) == null)
                     {
                         db.Mangas.Add(manga);
+                        db.SaveChanges();
                     }
                 }
                 catch(DbEntityValidationException dbEx)
@@ -78,7 +80,6 @@ namespace WebApplication1.Controllers
                     var chapterurl = i.Attributes["href"].Value;    //get the ref url
                     var split = chapterurl.Split('/');              //split the string to get the chapter number
                     var number = split[split.Count() - 1];
-                    chapterurl = "http://www.mangareader.net" + chapterurl; //get the full url
                     Chapter chapter = new Chapter { manganame = name, number = int.Parse(number), url = null, spacing = null };
                     templist.Add(chapter);
 
@@ -87,6 +88,7 @@ namespace WebApplication1.Controllers
                         if (db.Chapters.Find(name, int.Parse(number)) == null)
                         {
                             db.Chapters.Add(chapter);
+                            db.SaveChanges();
                         }
                     }
                     catch (DbEntityValidationException dbEx)

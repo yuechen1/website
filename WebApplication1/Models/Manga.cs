@@ -15,6 +15,10 @@ namespace WebApplication1.Models
     public partial class Manga
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Manga()
+        {
+            this.Chapters = new HashSet<Chapter>();
+        }
     
         public string name { get; set; }
         public string displayname { get; set; }
